@@ -1,16 +1,23 @@
-# read_ranger
+Read Ranger Mobil Uygulaması
 
-A new Flutter project.
+Read Ranger, kitap okuma deneyiminizi optimize etmek için tasarlanmış bir mobil uygulamadır. Bu uygulama, kitap okuma alışkanlıklarınızı izlemenize, kitapları kataloglamaya ve okuma ilerlemenizi kaydetmenize yardımcı olur.
 
-## Getting Started
+Özellikler
+Kitap Kataloglama: Okumak istediğiniz kitapları ekleyin ve kendi kütüphanenizi oluşturun.
+Okuma İlerlemesi: Okuduğunuz her kitabın ilerlemesini kaydedin ve hatırlayın.
+Okuma İstatistikleri: Okuma alışkanlıklarınızı izleyin ve geliştirin.
+Hatırlatıcılar: Okuma alışkanlıklarınızı desteklemek için özelleştirilebilir hatırlatıcılar ayarlayın.
+Kitap Önerileri: Kullanıcı tercihlerinize göre kişiselleştirilmiş kitap önerileri alın.
+Kurulum
+Uygulamayı indirmek için App Store veya Google Play Store bağlantılarından birini kullanın.
+Uygulamayı cihazınıza yükleyin ve başlatın.
+Bir hesap oluşturun veya mevcut bir hesapla giriş yapın.
+Kitapları ekleyin ve okuma deneyiminizin keyfini çıkarın!
+Kullanım
+Uygulamayı başlattıktan sonra, ana ekran üzerinden kitapları kataloglayabilir, okuma ilerlemesini kaydedebilir, istatistikleri görebilir ve ayarları özelleştirebilirsiniz. Arayüz basit ve kullanıcı dostudur, böylece uygulamayı kolayca kullanabilirsiniz.
 
-This project is a starting point for a Flutter application.
+Geliştirme
+Bu uygulama Flutter kullanılarak geliştirilmiştir. Kod tabanını görmek ve katkıda bulunmak için GitHub deposunu ziyaret edebilirsiniz: GitHub Repo
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Lisans
+Bu proje GNU Genel Kamu Lisansı v3.0 altında lisanslanmıştır. Daha fazla bilgi için LICENCE dosyasını okuyun.
