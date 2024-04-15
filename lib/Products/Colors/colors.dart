@@ -5,7 +5,7 @@ class ThemeColors {
   static final secondaryColor = HexColor("#17255A");
   static final tertiary = HexColor("#F5E2C8");
   static final quaternary = HexColor("#D88373");
-  static final Quinary = HexColor("#BD1E1E");
+  static final quinary = HexColor("#BD1E1E");
 }
 
 //Primary,Secondary,Tertiary

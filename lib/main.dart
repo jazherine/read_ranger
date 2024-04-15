@@ -1,38 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:read_ranger/Constants/Colors/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Features/Home/HomeViewController.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      darkTheme: ThemeData.dark(),
-      home: Scaffold(
-        appBar: AppBar(
-          actions: [
-            InkWell(
-              child: Lottie.asset('assets/lottie/LottieThemeChanger.json'),
-            )
-          ],
-          backgroundColor: ThemeColors.primaryColor,
-          title: const Text(
-            "Read Ranger",
-          ),
-        ),
-        body: const Column(children: []),
-      ),
+      home: HomeView(),
+      theme: ref.watch(isLightProvider) ? ThemeData.light() : ThemeData.dark(),
     );
   }
 }
