@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
-import 'package:read_ranger/Features/Home/HomeViewController.dart';
-import 'package:read_ranger/Products/Colors/colors.dart';
+import 'package:read_ranger/Features/Settings/SettingsView.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
@@ -12,59 +10,44 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> with TickerProviderStateMixin {
-  late final AnimationController _controller;
-  bool _isForward = false;
+  var _selectedIndex = 0;
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _controller = AnimationController(vsync: this)..value = 0.5;
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggleAnimation() {
-    if (_isForward) {
-      ref.watch(isLightProvider.notifier).changeIslight();
-      _controller.animateBack(0.5);
-    } else {
-      ref.watch(isLightProvider.notifier).changeIslight();
-
-      _controller.animateTo(0);
-    }
-    _isForward = !_isForward;
-  }
+  final tabs = [
+    Center(
+      child: Column(children: [
+        Text("Home"),
+      ]),
+    ),
+    Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [Text("Dark mode"), SettingsView()],
+    ))
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          InkWell(
-            onTap: () {
-              _toggleAnimation();
-            },
-            child: Lottie.asset(
-              'assets/lottie/LottieThemeChanger.json',
-              width: 50,
-              controller: _controller,
-              onLoaded: (p0) {
-                _controller.duration = p0.duration;
-              },
-            ),
-          )
+      body: tabs[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.shifting,
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.black,
+        selectedFontSize: 15,
+        unselectedFontSize: 12,
+        selectedIconTheme: IconThemeData(size: 25),
+        unselectedIconTheme: IconThemeData(size: 20),
+        currentIndex: _selectedIndex,
+        onTap: (value) {
+          setState(() {
+            _selectedIndex = value;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
+          BottomNavigationBarItem(label: "Settings", icon: Icon(Icons.settings_outlined)),
         ],
-        title: const Text(
-          "Read Ranger",
-        ),
       ),
-      body: const Column(children: []),
     );
   }
 }

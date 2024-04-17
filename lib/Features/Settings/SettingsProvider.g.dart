@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'HomeViewController.dart';
+part of 'SettingsProvider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
