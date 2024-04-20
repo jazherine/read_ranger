@@ -28,7 +28,29 @@ class _MyAppState extends ConsumerState<MyApp> {
         "/home": (context) => HomeView(),
       },
       home: HomeView(),
-      theme: ref.watch(isLightProvider) ? ThemeData.light() : ThemeData.dark(),
+      theme: ref.watch(isLightProvider)
+          ? ThemeData.light().copyWith(
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                type: BottomNavigationBarType.shifting,
+                selectedItemColor: Colors.blue,
+                unselectedItemColor: Colors.black,
+                selectedIconTheme: IconThemeData(size: 25),
+                selectedLabelStyle: TextStyle(fontSize: 15),
+                unselectedLabelStyle: TextStyle(fontSize: 15),
+                unselectedIconTheme: IconThemeData(size: 20),
+              ),
+            )
+          : ThemeData.dark().copyWith(
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                type: BottomNavigationBarType.shifting,
+                selectedItemColor: Colors.blue,
+                unselectedItemColor: Colors.white,
+                selectedIconTheme: IconThemeData(size: 25),
+                selectedLabelStyle: TextStyle(fontSize: 15),
+                unselectedLabelStyle: TextStyle(fontSize: 15),
+                unselectedIconTheme: IconThemeData(size: 20),
+              ),
+            ),
     );
   }
 }

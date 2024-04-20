@@ -6,7 +6,7 @@ part of 'SettingsProvider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$isLightHash() => r'a5f68ce4e2eb0ba4b2358dd78939993ef4978785';
+String _$isLightHash() => r'fd02a987ab012b3a844ace6d42fc2e0e5c823bef';
 
 /// See also [IsLight].
 @ProviderFor(IsLight)

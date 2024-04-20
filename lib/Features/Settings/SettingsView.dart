@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:read_ranger/Features/Settings/SettingsProvider.dart';
@@ -42,18 +43,33 @@ class _SettingsViewState extends ConsumerState<SettingsView> with TickerProvider
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: InkWell(
-        onTap: () {
-          _toggleAnimation();
-        },
-        child: Lottie.asset(
-          'assets/lottie/LottieThemeChanger.json',
-          width: 50,
-          controller: _controller,
-          onLoaded: (p0) {
-            _controller.duration = p0.duration;
-          },
-        ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: Text(
+              "Settings",
+              style: Theme.of(context).textTheme.displayLarge,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 200),
+            child: Text("Dark Mode "),
+          ),
+          InkWell(
+            onTap: () {
+              _toggleAnimation();
+            },
+            child: Lottie.asset(
+              'assets/lottie/LottieThemeChanger.json',
+              width: 50,
+              controller: _controller,
+              onLoaded: (p0) {
+                _controller.duration = p0.duration;
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
