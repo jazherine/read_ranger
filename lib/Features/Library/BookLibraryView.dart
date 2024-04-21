@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/Add_a_bookProvider.dart';
+import 'package:read_ranger/Features/CardDetailView/CardDetailView.dart';
 
 class BookLibraryView extends ConsumerStatefulWidget {
   const BookLibraryView({super.key});
@@ -23,7 +24,14 @@ class _BookLibraryViewState extends ConsumerState<BookLibraryView> {
       child: ListView.builder(
         itemCount: _bookModel.length,
         itemBuilder: (context, index) {
-          return LibraryCard(_bookModel[index]);
+          return InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => CardDetailView(
+                          bookModel: _bookModel[index],
+                        )));
+              },
+              child: LibraryCard(_bookModel[index]));
         },
       ),
     ));

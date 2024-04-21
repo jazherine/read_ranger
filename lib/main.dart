@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Features/Library/BookLibraryView.dart';
 import 'package:read_ranger/Features/Settings/SettingsProvider.dart';
 import 'package:read_ranger/Features/Settings/SettingsView.dart';
 
@@ -26,6 +27,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       routes: {
         "/settings": (context) => SettingsView(),
         "/home": (context) => HomeView(),
+        "/library": (context) => BookLibraryView(),
       },
       home: HomeView(),
       theme: ref.watch(isLightProvider)
