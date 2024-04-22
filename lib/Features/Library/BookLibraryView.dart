@@ -2,8 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/Add_a_bookProvider.dart';
+import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 import 'package:read_ranger/Features/CardDetailView/CardDetailView.dart';
+import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Products/Services/database_service.dart';
+
+final bookListStateProvider = StateProvider<List<BookModel>>((ref) {
+  return [];
+});
+final DatabaseService _databaseService = DatabaseService();
 
 class BookLibraryView extends ConsumerStatefulWidget {
   const BookLibraryView({super.key});
@@ -13,25 +20,29 @@ class BookLibraryView extends ConsumerStatefulWidget {
 }
 
 class _BookLibraryViewState extends ConsumerState<BookLibraryView> {
+  Future<void> fetchbookS() async {
+    List<BookModel> books = await _databaseService.fetchBookModels();
+    ref.read(bookListStateProvider.notifier).state = books;
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<BookModel> _bookModel = ref.read(bookModelProvider);
-
-    ref.watch(bookModelProvider);
+    fetchbookS();
+    ref.watch(bookListStateProvider);
 
     return Scaffold(
         body: Center(
       child: ListView.builder(
-        itemCount: _bookModel.length,
+        itemCount: ref.read(bookListStateProvider.notifier).state.length,
         itemBuilder: (context, index) {
           return InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => CardDetailView(
-                          bookModel: _bookModel[index],
+                          bookModel: ref.read(bookListStateProvider.notifier).state[index],
                         )));
               },
-              child: LibraryCard(_bookModel[index]));
+              child: LibraryCard(ref.read(bookListStateProvider.notifier).state[index]));
         },
       ),
     ));
@@ -58,6 +69,8 @@ class _LibraryCardState extends ConsumerState<LibraryCard> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(selectedIndex);
+
     return Card(
       child: ListTile(
         title: Text(widget.bookModel.bookName!),
@@ -82,8 +95,9 @@ class _LibraryCardState extends ConsumerState<LibraryCard> {
                       child: Text("No"),
                     ),
                     TextButton(
-                      onPressed: () {
-                        ref.read(bookModelProvider.notifier).removeBookModel(widget.bookModel.id!);
+                      onPressed: () async {
+                        _databaseService.deleteBookModels(widget.bookModel.id);
+
                         Navigator.of(context).pop();
                       },
                       child: Text("Yes"),

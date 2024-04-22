@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/Add_a_bookProvider.dart';
+import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
+import 'package:read_ranger/Products/Services/database_service.dart';
 
 class CardDetailView extends ConsumerStatefulWidget {
   const CardDetailView({super.key, required this.bookModel});
@@ -13,6 +14,8 @@ class CardDetailView extends ConsumerStatefulWidget {
 }
 
 class _CardDetailViewState extends ConsumerState<CardDetailView> {
+  final _databaseService = DatabaseService();
+
   late final File _image;
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
                           ),
                           TextButton(
                             onPressed: () {
-                              ref.read(bookModelProvider.notifier).removeBookModel(widget.bookModel.id!);
+                              _databaseService.deleteBookModels(widget.bookModel.id);
                               Navigator.of(context).popAndPushNamed("/home");
                             },
                             child: Text("Yes"),

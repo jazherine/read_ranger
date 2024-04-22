@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 
 import 'package:read_ranger/Features/Home/HomeView.dart';
 import 'package:read_ranger/Features/Library/BookLibraryView.dart';
 import 'package:read_ranger/Features/Settings/SettingsProvider.dart';
 import 'package:read_ranger/Features/Settings/SettingsView.dart';
+import 'package:read_ranger/Products/Services/database_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  DatabaseService.init();
   runApp(ProviderScope(child: const MyApp()));
 }
 

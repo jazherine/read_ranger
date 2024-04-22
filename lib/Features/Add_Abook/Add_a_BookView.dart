@@ -5,8 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/Add_a_bookProvider.dart';
+import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Products/Services/database_service.dart';
 import 'package:read_ranger/Products/Utility/image_picker.dart';
 
 class AddaBookView extends ConsumerStatefulWidget {
@@ -20,11 +21,10 @@ class AddaBookView extends ConsumerStatefulWidget {
 
 class _AddaBookViewState extends ConsumerState<AddaBookView> {
   File? _selectedimageFile;
+  final _databaseService = DatabaseService();
 
   late TextEditingController booknameController;
   late TextEditingController descriptionController;
-
-  var status = true;
 
   @override
   void initState() {
@@ -108,36 +108,29 @@ class _AddaBookViewState extends ConsumerState<AddaBookView> {
       Container(
           width: 250,
           child: ElevatedButton(
-              onPressed: status
-                  ? () {
-                      if (booknameController.text.isEmpty ||
-                          descriptionController.text.isEmpty ||
-                          _selectedimageFile == null) {
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text("Please fill all the fields")));
-                        return;
-                      } else {
-                        ref.read(bookModelProvider.notifier).addBookModel(BookModel(
-                              id: UniqueKey().toString(),
-                              bookName: booknameController.text,
-                              description: descriptionController.text,
-                              imagePath: _selectedimageFile!.path,
-                            ));
+            onPressed: () {
+              if (booknameController.text.isEmpty || descriptionController.text.isEmpty || _selectedimageFile == null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all the fields")));
+                return;
+              } else {
+                // ref.read(bookModelProvider.notifier).addBookModel(BookModel(
+                //       bookName: booknameController.text,
+                //       description: descriptionController.text,
+                //       imagePath: _selectedimageFile!.path,
+                //     ));
+                _databaseService.addBookModels(BookModel(
+                  bookName: booknameController.text,
+                  description: descriptionController.text,
+                  imagePath: _selectedimageFile!.path,
+                ));
+                inspect(_databaseService.fetchBookModels());
 
-                        inspect(ref.read(bookModelProvider));
-
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Book Added")));
-                        status = !status;
-                        ref.watch(selectedIndex.notifier).state = 1;
-                      }
-                    }
-                  : null,
-              child: Icon(Icons.add_outlined),
-              style: status
-                  ? ButtonStyle(
-                      shape: MaterialStatePropertyAll(RoundedRectangleBorder()),
-                      backgroundColor: MaterialStatePropertyAll(Colors.blue))
-                  : ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.grey))))
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Book Added")));
+                ref.watch(selectedIndex.notifier).state = 1;
+              }
+            },
+            child: Icon(Icons.add_outlined),
+          ))
     ]);
   }
 }

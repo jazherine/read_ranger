@@ -34,7 +34,5 @@ class SettingsManager {
   static Future<void> setDarkMode(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyDarkMode, value);
-    await prefs.set
   }
-  
 }
