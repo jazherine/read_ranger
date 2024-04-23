@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
-import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Features/Home/HomeProvider.dart';
 import 'package:read_ranger/Products/Services/database_service.dart';
 import 'package:read_ranger/Products/Utility/image_picker.dart';
 
@@ -32,6 +31,14 @@ class _AddaBookViewState extends ConsumerState<AddaBookView> {
     super.initState();
     booknameController = TextEditingController();
     descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    booknameController.dispose();
+    descriptionController.dispose();
   }
 
   @override
@@ -113,20 +120,16 @@ class _AddaBookViewState extends ConsumerState<AddaBookView> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all the fields")));
                 return;
               } else {
-                // ref.read(bookModelProvider.notifier).addBookModel(BookModel(
-                //       bookName: booknameController.text,
-                //       description: descriptionController.text,
-                //       imagePath: _selectedimageFile!.path,
-                //     ));
                 _databaseService.addBookModels(BookModel(
                   bookName: booknameController.text,
                   description: descriptionController.text,
                   imagePath: _selectedimageFile!.path,
                 ));
-                inspect(_databaseService.fetchBookModels());
 
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Book Added")));
-                ref.watch(selectedIndex.notifier).state = 1;
+                if (mounted) {
+                  ref.watch(selectedIndex.notifier).state = 1;
+                }
               }
             },
             child: Icon(Icons.add_outlined),

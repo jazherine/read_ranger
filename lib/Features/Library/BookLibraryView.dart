@@ -4,12 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 import 'package:read_ranger/Features/CardDetailView/CardDetailView.dart';
-import 'package:read_ranger/Features/Home/HomeView.dart';
+import 'package:read_ranger/Features/Home/HomeProvider.dart';
 import 'package:read_ranger/Products/Services/database_service.dart';
 
-final bookListStateProvider = StateProvider<List<BookModel>>((ref) {
-  return [];
-});
 final DatabaseService _databaseService = DatabaseService();
 
 class BookLibraryView extends ConsumerStatefulWidget {
@@ -22,27 +19,30 @@ class BookLibraryView extends ConsumerStatefulWidget {
 class _BookLibraryViewState extends ConsumerState<BookLibraryView> {
   Future<void> fetchbookS() async {
     List<BookModel> books = await _databaseService.fetchBookModels();
-    ref.read(bookListStateProvider.notifier).state = books;
+    if (mounted) {
+      ref.read(bookListStateProvider.notifier).state = books;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     fetchbookS();
-    ref.watch(bookListStateProvider);
+
+    final _books = ref.watch(bookListStateProvider);
 
     return Scaffold(
         body: Center(
       child: ListView.builder(
-        itemCount: ref.read(bookListStateProvider.notifier).state.length,
+        itemCount: _books.length,
         itemBuilder: (context, index) {
           return InkWell(
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => CardDetailView(
-                          bookModel: ref.read(bookListStateProvider.notifier).state[index],
+                          bookModel: _books[index],
                         )));
               },
-              child: LibraryCard(ref.read(bookListStateProvider.notifier).state[index]));
+              child: LibraryCard(_books[index]));
         },
       ),
     ));
@@ -69,8 +69,6 @@ class _LibraryCardState extends ConsumerState<LibraryCard> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(selectedIndex);
-
     return Card(
       child: ListTile(
         title: Text(widget.bookModel.bookName!),

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/Add_a_BookView.dart';
+import 'package:read_ranger/Features/Home/HomeProvider.dart';
 import 'package:read_ranger/Features/Library/BookLibraryView.dart';
 import 'package:read_ranger/Features/Settings/SettingsView.dart';
-
-final selectedIndex = StateProvider<int>((ref) => 0);
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
@@ -38,9 +37,13 @@ class _HomeViewState extends ConsumerState<HomeView> with TickerProviderStateMix
       resizeToAvoidBottomInset: false,
       body: tabs[ref.watch(selectedIndex)],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: ref.watch(selectedIndex),
+        currentIndex: ref.read(selectedIndex),
         onTap: (value) {
-          ref.read(selectedIndex.notifier).state = value;
+          if (mounted) {
+            ref.read(selectedIndex.notifier).state = value;
+          } else {
+            throw Exception("Widget is not mounted");
+          }
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
