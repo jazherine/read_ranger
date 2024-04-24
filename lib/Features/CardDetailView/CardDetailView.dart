@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
+import 'package:read_ranger/Features/CardDetailView/cardDetailProvider.dart';
 import 'package:read_ranger/Products/Services/database_service.dart';
 
 class CardDetailView extends ConsumerStatefulWidget {
@@ -21,21 +22,23 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
   final _databaseService = DatabaseService();
 
   late final File _image;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _image = File(widget.bookModel.imagePath!);
   }
 
-  bool _onSession = false;
-
   @override
   Widget build(BuildContext context) {
+    bool _onSession = ref.watch(onSessionProvider);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          ref.read(onSessionProvider.notifier).update((state) => state = false);
+
           Navigator.of(context).pop();
         },
         child: Icon(Icons.arrow_back),
@@ -75,7 +78,14 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
                       ))),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.only(top: 70),
+              child: Text(
+                "You read this book for  ${widget.bookModel.durationMinutes ?? 0} minutes",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 40),
               child: Image.file(
                 _image,
                 height: 200,
@@ -87,16 +97,29 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
             ),
             Text(widget.bookModel.description!),
             TextButton(
-              onPressed: () {
-                _onSession = !_onSession;
-                setState(() {});
+              onPressed: () async {
+                Duration _duration = ref.read(durationProvider);
+
+                if (_onSession == true && mounted) {
+                  var _oldDuration = widget.bookModel.durationMinutes ?? 0;
+                  _oldDuration += _duration.inMinutes;
+                  Duration newduration = Duration(minutes: _oldDuration);
+
+                  await _databaseService.updateBookModels(id: widget.bookModel.id, duration: newduration);
+                }
+                ref.read(onSessionProvider.notifier).update((state) => state = !state);
               },
               child: Text(
-                "Start a new session",
-                style: TextStyle(color: Colors.blue),
+                _onSession ? "End session" : "Start a new session",
+                style: _onSession ? TextStyle(color: Colors.red) : TextStyle(color: Colors.blue),
               ),
             ),
-            TimeWidget(onSession: _onSession),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 30),
+              child: TimeWidget(
+                onSession: _onSession,
+              ),
+            ),
           ],
         ),
       ),
@@ -104,8 +127,8 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
   }
 }
 
-class TimeWidget extends StatefulWidget {
-  TimeWidget({
+class TimeWidget extends ConsumerStatefulWidget {
+  const TimeWidget({
     super.key,
     required bool onSession,
   }) : _onSession = onSession;
@@ -113,17 +136,18 @@ class TimeWidget extends StatefulWidget {
   final bool _onSession;
 
   @override
-  State<TimeWidget> createState() => _TimeWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _TimeWidgetState();
 }
 
-class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateMixin {
-  Duration duration = Duration();
+class _TimeWidgetState extends ConsumerState<TimeWidget> with SingleTickerProviderStateMixin {
   Timer? timer;
   late AnimationController controller;
   late Animation<double> animation;
+  late Duration _duration;
 
   @override
   void initState() {
+    _duration = Duration();
     // TODO: implement initState
     super.initState();
 
@@ -140,13 +164,18 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
     // TODO: implement dispose
     super.dispose();
     timer?.cancel();
+    controller.dispose();
   }
 
   void addTime() {
     final addSeconds = 1;
     setState(() {
-      final seconds = duration.inSeconds + addSeconds;
-      duration = Duration(seconds: seconds);
+      final seconds = _duration.inSeconds + addSeconds;
+      _duration = Duration(seconds: seconds);
+      if (widget._onSession == false) {
+        _duration = Duration(seconds: 0);
+      }
+      ref.read(durationProvider.notifier).update((state) => state = _duration);
     });
   }
 
@@ -159,8 +188,9 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     String twoDigits(int n) => n.toString().padLeft(2, "0");
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    final minutes = twoDigits(_duration.inMinutes.remainder(60));
+    final seconds = twoDigits(_duration.inSeconds.remainder(60));
+    final hours = twoDigits(_duration.inHours);
 
     return AnimatedOpacity(
       duration: Duration(milliseconds: 500),
@@ -193,6 +223,11 @@ class _TimeWidgetState extends State<TimeWidget> with SingleTickerProviderStateM
                     progress: animation,
                   )),
               timeCard(
+                time: hours,
+                header: "Hours",
+              ),
+              SizedBox(width: 10),
+              timeCard(
                 time: minutes,
                 header: "Minutes",
               ),
@@ -218,25 +253,22 @@ class timeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Future.delayed(Duration(seconds: 5)),
-      builder: (context, snapshot) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-            ),
-            child: Text(
-              "$time",
-              style: TextStyle(color: Colors.black),
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
           ),
-          const SizedBox(height: 10),
-          Text(header),
-        ],
-      ),
+          child: Text(
+            "$time",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(header),
+      ],
     );
   }
 }

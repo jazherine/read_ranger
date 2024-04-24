@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 import 'package:read_ranger/Features/CardDetailView/CardDetailView.dart';
+import 'package:read_ranger/Features/CardDetailView/cardDetailProvider.dart';
 import 'package:read_ranger/Features/Home/HomeProvider.dart';
 import 'package:read_ranger/Products/Services/database_service.dart';
 

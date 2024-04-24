@@ -27,8 +27,13 @@ const BookModelSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'imagePath': PropertySchema(
+    r'durationMinutes': PropertySchema(
       id: 2,
+      name: r'durationMinutes',
+      type: IsarType.long,
+    ),
+    r'imagePath': PropertySchema(
+      id: 3,
       name: r'imagePath',
       type: IsarType.string,
     )
@@ -82,7 +87,8 @@ void _bookModelSerialize(
 ) {
   writer.writeString(offsets[0], object.bookName);
   writer.writeString(offsets[1], object.description);
-  writer.writeString(offsets[2], object.imagePath);
+  writer.writeLong(offsets[2], object.durationMinutes);
+  writer.writeString(offsets[3], object.imagePath);
 }
 
 BookModel _bookModelDeserialize(
@@ -94,8 +100,9 @@ BookModel _bookModelDeserialize(
   final object = BookModel(
     bookName: reader.readStringOrNull(offsets[0]),
     description: reader.readStringOrNull(offsets[1]),
-    imagePath: reader.readStringOrNull(offsets[2]),
+    imagePath: reader.readStringOrNull(offsets[3]),
   );
+  object.durationMinutes = reader.readLongOrNull(offsets[2]);
   object.id = id;
   return object;
 }
@@ -112,6 +119,8 @@ P _bookModelDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -130,7 +139,8 @@ void _bookModelAttach(IsarCollection<dynamic> col, Id id, BookModel object) {
   object.id = id;
 }
 
-extension BookModelQueryWhereSort on QueryBuilder<BookModel, BookModel, QWhere> {
+extension BookModelQueryWhereSort
+    on QueryBuilder<BookModel, BookModel, QWhere> {
   QueryBuilder<BookModel, BookModel, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
@@ -138,7 +148,8 @@ extension BookModelQueryWhereSort on QueryBuilder<BookModel, BookModel, QWhere> 
   }
 }
 
-extension BookModelQueryWhere on QueryBuilder<BookModel, BookModel, QWhereClause> {
+extension BookModelQueryWhere
+    on QueryBuilder<BookModel, BookModel, QWhereClause> {
   QueryBuilder<BookModel, BookModel, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -170,7 +181,8 @@ extension BookModelQueryWhere on QueryBuilder<BookModel, BookModel, QWhereClause
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
+  QueryBuilder<BookModel, BookModel, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -178,7 +190,8 @@ extension BookModelQueryWhere on QueryBuilder<BookModel, BookModel, QWhereClause
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
+  QueryBuilder<BookModel, BookModel, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -203,7 +216,8 @@ extension BookModelQueryWhere on QueryBuilder<BookModel, BookModel, QWhereClause
   }
 }
 
-extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCondition> {
+extension BookModelQueryFilter
+    on QueryBuilder<BookModel, BookModel, QFilterCondition> {
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -212,7 +226,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameIsNotNull() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      bookNameIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'bookName',
@@ -308,7 +323,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameContains(String value,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -319,7 +335,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameMatches(String pattern,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -339,7 +356,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookNameIsNotEmpty() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      bookNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'bookName',
@@ -348,7 +366,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionIsNull() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
         property: r'description',
@@ -356,7 +375,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionIsNotNull() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'description',
@@ -377,7 +397,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionGreaterThan(
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -426,7 +447,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionStartsWith(
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
@@ -452,7 +474,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionContains(String value,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -463,7 +486,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionMatches(String pattern,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -474,7 +498,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionIsEmpty() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'description',
@@ -483,7 +508,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> descriptionIsNotEmpty() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      descriptionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'description',
@@ -492,7 +518,82 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> idEqualTo(Id value) {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'durationMinutes',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'durationMinutes',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'durationMinutes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'durationMinutes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'durationMinutes',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      durationMinutesBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'durationMinutes',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> idEqualTo(
+      Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -552,7 +653,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathIsNotNull() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      imagePathIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
         property: r'imagePath',
@@ -573,7 +675,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathGreaterThan(
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      imagePathGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
@@ -648,7 +751,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathContains(String value,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathContains(
+      String value,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -659,7 +763,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathMatches(String pattern,
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathMatches(
+      String pattern,
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -679,7 +784,8 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> imagePathIsNotEmpty() {
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      imagePathIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'imagePath',
@@ -689,9 +795,11 @@ extension BookModelQueryFilter on QueryBuilder<BookModel, BookModel, QFilterCond
   }
 }
 
-extension BookModelQueryObject on QueryBuilder<BookModel, BookModel, QFilterCondition> {}
+extension BookModelQueryObject
+    on QueryBuilder<BookModel, BookModel, QFilterCondition> {}
 
-extension BookModelQueryLinks on QueryBuilder<BookModel, BookModel, QFilterCondition> {}
+extension BookModelQueryLinks
+    on QueryBuilder<BookModel, BookModel, QFilterCondition> {}
 
 extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
   QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByBookName() {
@@ -718,6 +826,18 @@ extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
     });
   }
 
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationMinutes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'durationMinutes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationMinutesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'durationMinutes', Sort.desc);
+    });
+  }
+
   QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByImagePath() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'imagePath', Sort.asc);
@@ -731,7 +851,8 @@ extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
   }
 }
 
-extension BookModelQuerySortThenBy on QueryBuilder<BookModel, BookModel, QSortThenBy> {
+extension BookModelQuerySortThenBy
+    on QueryBuilder<BookModel, BookModel, QSortThenBy> {
   QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByBookName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bookName', Sort.asc);
@@ -753,6 +874,18 @@ extension BookModelQuerySortThenBy on QueryBuilder<BookModel, BookModel, QSortTh
   QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationMinutes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'durationMinutes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationMinutesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'durationMinutes', Sort.desc);
     });
   }
 
@@ -781,27 +914,38 @@ extension BookModelQuerySortThenBy on QueryBuilder<BookModel, BookModel, QSortTh
   }
 }
 
-extension BookModelQueryWhereDistinct on QueryBuilder<BookModel, BookModel, QDistinct> {
-  QueryBuilder<BookModel, BookModel, QDistinct> distinctByBookName({bool caseSensitive = true}) {
+extension BookModelQueryWhereDistinct
+    on QueryBuilder<BookModel, BookModel, QDistinct> {
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByBookName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bookName', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QDistinct> distinctByDescription({bool caseSensitive = true}) {
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByDescription(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QDistinct> distinctByImagePath({bool caseSensitive = true}) {
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByDurationMinutes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'durationMinutes');
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByImagePath(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'imagePath', caseSensitive: caseSensitive);
     });
   }
 }
 
-extension BookModelQueryProperty on QueryBuilder<BookModel, BookModel, QQueryProperty> {
+extension BookModelQueryProperty
+    on QueryBuilder<BookModel, BookModel, QQueryProperty> {
   QueryBuilder<BookModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
@@ -817,6 +961,12 @@ extension BookModelQueryProperty on QueryBuilder<BookModel, BookModel, QQueryPro
   QueryBuilder<BookModel, String?, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
+    });
+  }
+
+  QueryBuilder<BookModel, int?, QQueryOperations> durationMinutesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'durationMinutes');
     });
   }
 

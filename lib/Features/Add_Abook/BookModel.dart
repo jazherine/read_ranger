@@ -9,6 +9,10 @@ class BookModel {
   String? bookName;
   String? description;
   String? imagePath;
-
-  BookModel({this.bookName, this.description, this.imagePath});
+  int? durationMinutes;
+  BookModel({this.bookName, this.description, this.imagePath, Duration? duration}) {
+    if (duration != null) {
+      this.durationMinutes = duration.inMinutes;
+    }
+  }
 }

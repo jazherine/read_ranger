@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
@@ -17,11 +20,11 @@ class DatabaseService {
     return await isar.bookModels.where().findAll();
   }
 
-  Future<void> updateBookModels({required int id, required String description, bool isDone = false}) async {
-    final existingTodo = await isar.bookModels.get(id);
-    if (existingTodo != null) {
-      existingTodo..description = description;
-      isar.writeTxn(() => isar.bookModels.put(existingTodo));
+  Future<void> updateBookModels({required int id, required Duration duration}) async {
+    final existingbook = await isar.bookModels.get(id);
+    if (existingbook != null) {
+      existingbook.durationMinutes = duration.inMinutes;
+      isar.writeTxn(() => isar.bookModels.put(existingbook));
     }
   }
 
