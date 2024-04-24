@@ -22,18 +22,23 @@ const BookModelSchema = CollectionSchema(
       name: r'bookName',
       type: IsarType.string,
     ),
-    r'description': PropertySchema(
+    r'bookPages': PropertySchema(
       id: 1,
+      name: r'bookPages',
+      type: IsarType.string,
+    ),
+    r'description': PropertySchema(
+      id: 2,
       name: r'description',
       type: IsarType.string,
     ),
     r'durationMinutes': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'durationMinutes',
       type: IsarType.long,
     ),
     r'imagePath': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'imagePath',
       type: IsarType.string,
     )
@@ -65,6 +70,12 @@ int _bookModelEstimateSize(
     }
   }
   {
+    final value = object.bookPages;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.description;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -86,9 +97,10 @@ void _bookModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.bookName);
-  writer.writeString(offsets[1], object.description);
-  writer.writeLong(offsets[2], object.durationMinutes);
-  writer.writeString(offsets[3], object.imagePath);
+  writer.writeString(offsets[1], object.bookPages);
+  writer.writeString(offsets[2], object.description);
+  writer.writeLong(offsets[3], object.durationMinutes);
+  writer.writeString(offsets[4], object.imagePath);
 }
 
 BookModel _bookModelDeserialize(
@@ -99,10 +111,11 @@ BookModel _bookModelDeserialize(
 ) {
   final object = BookModel(
     bookName: reader.readStringOrNull(offsets[0]),
-    description: reader.readStringOrNull(offsets[1]),
-    imagePath: reader.readStringOrNull(offsets[3]),
+    bookPages: reader.readStringOrNull(offsets[1]),
+    description: reader.readStringOrNull(offsets[2]),
+    imagePath: reader.readStringOrNull(offsets[4]),
   );
-  object.durationMinutes = reader.readLongOrNull(offsets[2]);
+  object.durationMinutes = reader.readLongOrNull(offsets[3]);
   object.id = id;
   return object;
 }
@@ -119,8 +132,10 @@ P _bookModelDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -361,6 +376,155 @@ extension BookModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'bookName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'bookPages',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      bookPagesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'bookPages',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      bookPagesGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bookPages',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'bookPages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'bookPages',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> bookPagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bookPages',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      bookPagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'bookPages',
         value: '',
       ));
     });
@@ -814,6 +978,18 @@ extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
     });
   }
 
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByBookPages() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookPages', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByBookPagesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookPages', Sort.desc);
+    });
+  }
+
   QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
@@ -862,6 +1038,18 @@ extension BookModelQuerySortThenBy
   QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByBookNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bookName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByBookPages() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookPages', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByBookPagesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bookPages', Sort.desc);
     });
   }
 
@@ -923,6 +1111,13 @@ extension BookModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByBookPages(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'bookPages', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<BookModel, BookModel, QDistinct> distinctByDescription(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -955,6 +1150,12 @@ extension BookModelQueryProperty
   QueryBuilder<BookModel, String?, QQueryOperations> bookNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bookName');
+    });
+  }
+
+  QueryBuilder<BookModel, String?, QQueryOperations> bookPagesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'bookPages');
     });
   }
 

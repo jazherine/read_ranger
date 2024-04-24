@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 
@@ -10,6 +11,8 @@ import 'package:read_ranger/Products/Services/database_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   DatabaseService.init();
   runApp(ProviderScope(child: const MyApp()));
 }

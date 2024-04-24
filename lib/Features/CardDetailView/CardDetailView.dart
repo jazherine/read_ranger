@@ -32,6 +32,8 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
   @override
   Widget build(BuildContext context) {
     bool _onSession = ref.watch(onSessionProvider);
+    int? _duration = widget.bookModel.durationMinutes ?? 0;
+    String? _bookPages = widget.bookModel.bookPages ?? "0";
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -80,38 +82,68 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
             Padding(
               padding: const EdgeInsets.only(top: 70),
               child: Text(
-                "You read this book for  ${widget.bookModel.durationMinutes ?? 0} minutes",
+                "You read this book for ${_duration ~/ 60} hours and    ${_duration % 60} minutes",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Image.file(
-                _image,
-                height: 200,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 40, left: 80),
+                  child: Image.file(
+                    _image,
+                    height: 200,
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        widget.bookModel.bookName!,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        widget.bookModel.description!,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    Text(
+                      _bookPages + " Pages",
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ],
+                )
+              ],
             ),
             Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Text(widget.bookModel.bookName!),
-            ),
-            Text(widget.bookModel.description!),
-            TextButton(
-              onPressed: () async {
-                Duration _duration = ref.read(durationProvider);
+              padding: const EdgeInsets.only(top: 20),
+              child: Card(
+                shadowColor: Colors.blue,
+                elevation: 5,
+                child: TextButton(
+                  onPressed: () async {
+                    Duration _duration = ref.read(durationProvider);
 
-                if (_onSession == true && mounted) {
-                  var _oldDuration = widget.bookModel.durationMinutes ?? 0;
-                  _oldDuration += _duration.inMinutes;
-                  Duration newduration = Duration(minutes: _oldDuration);
+                    if (_onSession == true && mounted) {
+                      var _oldDuration = widget.bookModel.durationMinutes ?? 0;
+                      _oldDuration += _duration.inMinutes;
+                      Duration newduration = Duration(minutes: _oldDuration);
 
-                  await _databaseService.updateBookModels(id: widget.bookModel.id, duration: newduration);
-                }
-                ref.read(onSessionProvider.notifier).update((state) => state = !state);
-              },
-              child: Text(
-                _onSession ? "End session" : "Start a new session",
-                style: _onSession ? TextStyle(color: Colors.red) : TextStyle(color: Colors.blue),
+                      await _databaseService.updateBookModels(id: widget.bookModel.id, duration: newduration);
+                    }
+                    ref.read(onSessionProvider.notifier).update((state) => state = !state);
+                  },
+                  child: Text(
+                    _onSession ? "Finish Reading" : "Start Reading",
+                    style: _onSession ? TextStyle(color: Colors.red) : TextStyle(color: Colors.blue, fontSize: 40),
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -153,7 +185,7 @@ class _TimeWidgetState extends ConsumerState<TimeWidget> with SingleTickerProvid
 
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 500),
     );
 
     animation = Tween<double>(begin: 0.0, end: 1.0).animate(controller);
@@ -206,22 +238,25 @@ class _TimeWidgetState extends ConsumerState<TimeWidget> with SingleTickerProvid
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                  onPressed: () {
-                    if (timer == null || !timer!.isActive) {
-                      controller.forward();
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: IconButton(
+                    onPressed: () {
+                      if (timer == null || !timer!.isActive) {
+                        controller.forward();
 
-                      startTimer();
-                    } else {
-                      timer!.cancel();
-                      controller.reverse();
-                    }
-                  },
-                  icon: AnimatedIcon(
-                    size: 50,
-                    icon: AnimatedIcons.play_pause,
-                    progress: animation,
-                  )),
+                        startTimer();
+                      } else {
+                        timer!.cancel();
+                        controller.reverse();
+                      }
+                    },
+                    icon: AnimatedIcon(
+                      size: 30,
+                      icon: AnimatedIcons.play_pause,
+                      progress: animation,
+                    )),
+              ),
               timeCard(
                 time: hours,
                 header: "Hours",
@@ -259,11 +294,11 @@ class timeCard extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
           ),
           child: Text(
             "$time",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(height: 10),
