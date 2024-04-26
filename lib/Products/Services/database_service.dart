@@ -1,9 +1,6 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Add_Abook/BookModel.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 
 class DatabaseService {
   static late Isar isar;
@@ -16,11 +13,23 @@ class DatabaseService {
     isar.writeTxn(() => isar.bookModels.put(bookModel));
   }
 
-  Future<List<BookModel>> fetchBookModels() async {
-    return await isar.bookModels.where().findAll();
+  Future<List<BookModel>> fetchBooksUncompletedModels() async {
+    return await isar.bookModels.where().filter().isCompletedEqualTo(false).findAll();
   }
 
-  Future<void> updateBookModels({required int id, required Duration duration}) async {
+  Future<List<BookModel>> fetchBookscompletedModels() async {
+    return await isar.bookModels.where().filter().isCompletedEqualTo(true).findAll();
+  }
+
+  updateCompletedBookModels({required int id}) async {
+    final existingbook = await isar.bookModels.get(id);
+    if (existingbook != null) {
+      existingbook.isCompleted = true;
+      isar.writeTxn(() => isar.bookModels.put(existingbook));
+    }
+  }
+
+  Future<void> updateDurationBookModels({required int id, required Duration duration}) async {
     final existingbook = await isar.bookModels.get(id);
     if (existingbook != null) {
       existingbook.durationMinutes = duration.inMinutes;

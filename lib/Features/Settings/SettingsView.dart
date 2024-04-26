@@ -1,8 +1,8 @@
+import 'package:com.ugurTurker.read_ranger/Features/Settings/SettingsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
-import 'package:read_ranger/Features/Settings/SettingsProvider.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});

@@ -1,10 +1,11 @@
+import 'package:com.ugurTurker.read_ranger/Features/Add_Abook/Add_a_BookView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Home/HomeProvider.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Library/BookLibraryView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Settings/SettingsView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/StatusView/StatusView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/Add_a_BookView.dart';
-import 'package:read_ranger/Features/Home/HomeProvider.dart';
-import 'package:read_ranger/Features/Library/BookLibraryView.dart';
-import 'package:read_ranger/Features/Settings/SettingsView.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key});
@@ -16,9 +17,7 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView> with TickerProviderStateMixin {
   final tabs = [
     Center(
-      child: Column(children: [
-        Text("Home"),
-      ]),
+      child: StatusView(),
     ),
     Center(
       child: BookLibraryView(),

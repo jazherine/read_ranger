@@ -1,19 +1,18 @@
+import 'package:com.ugurTurker.read_ranger/Features/Home/HomeView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Library/BookLibraryView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Settings/SettingsProvider.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Settings/SettingsView.dart';
+import 'package:com.ugurTurker.read_ranger/Products/Services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
 
-import 'package:read_ranger/Features/Home/HomeView.dart';
-import 'package:read_ranger/Features/Library/BookLibraryView.dart';
-import 'package:read_ranger/Features/Settings/SettingsProvider.dart';
-import 'package:read_ranger/Features/Settings/SettingsView.dart';
-import 'package:read_ranger/Products/Services/database_service.dart';
-
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-  DatabaseService.init();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  await DatabaseService.init();
+
   runApp(ProviderScope(child: const MyApp()));
 }
 

@@ -41,6 +41,11 @@ const BookModelSchema = CollectionSchema(
       id: 4,
       name: r'imagePath',
       type: IsarType.string,
+    ),
+    r'isCompleted': PropertySchema(
+      id: 5,
+      name: r'isCompleted',
+      type: IsarType.bool,
     )
   },
   estimateSize: _bookModelEstimateSize,
@@ -101,6 +106,7 @@ void _bookModelSerialize(
   writer.writeString(offsets[2], object.description);
   writer.writeLong(offsets[3], object.durationMinutes);
   writer.writeString(offsets[4], object.imagePath);
+  writer.writeBool(offsets[5], object.isCompleted);
 }
 
 BookModel _bookModelDeserialize(
@@ -114,6 +120,7 @@ BookModel _bookModelDeserialize(
     bookPages: reader.readStringOrNull(offsets[1]),
     description: reader.readStringOrNull(offsets[2]),
     imagePath: reader.readStringOrNull(offsets[4]),
+    isCompleted: reader.readBoolOrNull(offsets[5]),
   );
   object.durationMinutes = reader.readLongOrNull(offsets[3]);
   object.id = id;
@@ -137,6 +144,8 @@ P _bookModelDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -957,6 +966,34 @@ extension BookModelQueryFilter
       ));
     });
   }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      isCompletedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isCompleted',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
+      isCompletedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isCompleted',
+      ));
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterFilterCondition> isCompletedEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isCompleted',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension BookModelQueryObject
@@ -1023,6 +1060,18 @@ extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
   QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByImagePathDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'imagePath', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByIsCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByIsCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCompleted', Sort.desc);
     });
   }
 }
@@ -1100,6 +1149,18 @@ extension BookModelQuerySortThenBy
       return query.addSortBy(r'imagePath', Sort.desc);
     });
   }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByIsCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByIsCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCompleted', Sort.desc);
+    });
+  }
 }
 
 extension BookModelQueryWhereDistinct
@@ -1135,6 +1196,12 @@ extension BookModelQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'imagePath', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByIsCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isCompleted');
     });
   }
 }
@@ -1174,6 +1241,12 @@ extension BookModelQueryProperty
   QueryBuilder<BookModel, String?, QQueryOperations> imagePathProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'imagePath');
+    });
+  }
+
+  QueryBuilder<BookModel, bool?, QQueryOperations> isCompletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isCompleted');
     });
   }
 }

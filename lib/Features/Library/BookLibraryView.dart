@@ -1,12 +1,11 @@
 import 'dart:io';
 
+import 'package:com.ugurTurker.read_ranger/Features/Add_Abook/BookModel.dart';
+import 'package:com.ugurTurker.read_ranger/Features/CardDetailView/CardDetailView.dart';
+import 'package:com.ugurTurker.read_ranger/Features/Home/HomeProvider.dart';
+import 'package:com.ugurTurker.read_ranger/Products/Services/database_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_ranger/Features/Add_Abook/BookModel.dart';
-import 'package:read_ranger/Features/CardDetailView/CardDetailView.dart';
-import 'package:read_ranger/Features/CardDetailView/cardDetailProvider.dart';
-import 'package:read_ranger/Features/Home/HomeProvider.dart';
-import 'package:read_ranger/Products/Services/database_service.dart';
 
 final DatabaseService _databaseService = DatabaseService();
 
@@ -19,7 +18,7 @@ class BookLibraryView extends ConsumerStatefulWidget {
 
 class _BookLibraryViewState extends ConsumerState<BookLibraryView> {
   Future<void> fetchbookS() async {
-    List<BookModel> books = await _databaseService.fetchBookModels();
+    List<BookModel> books = await _databaseService.fetchBooksUncompletedModels();
     if (mounted) {
       ref.read(bookListStateProvider.notifier).state = books;
     }
@@ -32,21 +31,27 @@ class _BookLibraryViewState extends ConsumerState<BookLibraryView> {
     final _books = ref.watch(bookListStateProvider);
 
     return Scaffold(
+        appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              " Actively Reading",
+              style: Theme.of(context).textTheme.headlineLarge,
+            )),
         body: Center(
-      child: ListView.builder(
-        itemCount: _books.length,
-        itemBuilder: (context, index) {
-          return InkWell(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CardDetailView(
-                          bookModel: _books[index],
-                        )));
-              },
-              child: LibraryCard(_books[index]));
-        },
-      ),
-    ));
+          child: ListView.builder(
+            itemCount: _books.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => CardDetailView(
+                              bookModel: _books[index],
+                            )));
+                  },
+                  child: LibraryCard(_books[index]));
+            },
+          ),
+        ));
   }
 }
 
