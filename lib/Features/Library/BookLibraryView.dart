@@ -82,7 +82,7 @@ class _LibraryCardState extends ConsumerState<LibraryCard> {
           _image,
           height: 60,
         ),
-        subtitle: Text(widget.bookModel.description!),
+        subtitle: Text(widget.bookModel.description!, maxLines: 2, overflow: TextOverflow.ellipsis),
         trailing: IconButton(
           icon: Icon(Icons.delete),
           onPressed: () {

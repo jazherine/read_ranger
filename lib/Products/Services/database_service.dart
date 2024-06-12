@@ -32,7 +32,7 @@ class DatabaseService {
   Future<void> updateDurationBookModels({required int id, required Duration duration}) async {
     final existingbook = await isar.bookModels.get(id);
     if (existingbook != null) {
-      existingbook.durationMinutes = duration.inMinutes;
+      existingbook.durationSeconds = duration.inSeconds;
       isar.writeTxn(() => isar.bookModels.put(existingbook));
     }
   }

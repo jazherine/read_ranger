@@ -32,9 +32,9 @@ const BookModelSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'durationMinutes': PropertySchema(
+    r'durationSeconds': PropertySchema(
       id: 3,
-      name: r'durationMinutes',
+      name: r'durationSeconds',
       type: IsarType.long,
     ),
     r'imagePath': PropertySchema(
@@ -104,7 +104,7 @@ void _bookModelSerialize(
   writer.writeString(offsets[0], object.bookName);
   writer.writeString(offsets[1], object.bookPages);
   writer.writeString(offsets[2], object.description);
-  writer.writeLong(offsets[3], object.durationMinutes);
+  writer.writeLong(offsets[3], object.durationSeconds);
   writer.writeString(offsets[4], object.imagePath);
   writer.writeBool(offsets[5], object.isCompleted);
 }
@@ -122,7 +122,7 @@ BookModel _bookModelDeserialize(
     imagePath: reader.readStringOrNull(offsets[4]),
     isCompleted: reader.readBoolOrNull(offsets[5]),
   );
-  object.durationMinutes = reader.readLongOrNull(offsets[3]);
+  object.durationSeconds = reader.readLongOrNull(offsets[3]);
   object.id = id;
   return object;
 }
@@ -692,63 +692,63 @@ extension BookModelQueryFilter
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesIsNull() {
+      durationSecondsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'durationMinutes',
+        property: r'durationSeconds',
       ));
     });
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesIsNotNull() {
+      durationSecondsIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'durationMinutes',
+        property: r'durationSeconds',
       ));
     });
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesEqualTo(int? value) {
+      durationSecondsEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'durationMinutes',
+        property: r'durationSeconds',
         value: value,
       ));
     });
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesGreaterThan(
+      durationSecondsGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'durationMinutes',
+        property: r'durationSeconds',
         value: value,
       ));
     });
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesLessThan(
+      durationSecondsLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'durationMinutes',
+        property: r'durationSeconds',
         value: value,
       ));
     });
   }
 
   QueryBuilder<BookModel, BookModel, QAfterFilterCondition>
-      durationMinutesBetween(
+      durationSecondsBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -756,7 +756,7 @@ extension BookModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'durationMinutes',
+        property: r'durationSeconds',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1039,15 +1039,15 @@ extension BookModelQuerySortBy on QueryBuilder<BookModel, BookModel, QSortBy> {
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationMinutes() {
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationSeconds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'durationMinutes', Sort.asc);
+      return query.addSortBy(r'durationSeconds', Sort.asc);
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationMinutesDesc() {
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> sortByDurationSecondsDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'durationMinutes', Sort.desc);
+      return query.addSortBy(r'durationSeconds', Sort.desc);
     });
   }
 
@@ -1114,15 +1114,15 @@ extension BookModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationMinutes() {
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationSeconds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'durationMinutes', Sort.asc);
+      return query.addSortBy(r'durationSeconds', Sort.asc);
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationMinutesDesc() {
+  QueryBuilder<BookModel, BookModel, QAfterSortBy> thenByDurationSecondsDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'durationMinutes', Sort.desc);
+      return query.addSortBy(r'durationSeconds', Sort.desc);
     });
   }
 
@@ -1186,9 +1186,9 @@ extension BookModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<BookModel, BookModel, QDistinct> distinctByDurationMinutes() {
+  QueryBuilder<BookModel, BookModel, QDistinct> distinctByDurationSeconds() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'durationMinutes');
+      return query.addDistinctBy(r'durationSeconds');
     });
   }
 
@@ -1232,9 +1232,9 @@ extension BookModelQueryProperty
     });
   }
 
-  QueryBuilder<BookModel, int?, QQueryOperations> durationMinutesProperty() {
+  QueryBuilder<BookModel, int?, QQueryOperations> durationSecondsProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'durationMinutes');
+      return query.addPropertyName(r'durationSeconds');
     });
   }
 

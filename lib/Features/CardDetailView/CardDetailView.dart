@@ -8,6 +8,7 @@ import 'package:com.ugurTurker.read_ranger/Products/Services/database_service.da
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,13 +33,19 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    print("Setstate oldu kank");
     bool _onSession = ref.watch(onSessionProvider);
-    int? _duration = widget.bookModel.durationMinutes ?? 0;
+    int? _duration = widget.bookModel.durationSeconds ?? 0;
     String? _bookPages = widget.bookModel.bookPages ?? "0";
+
+    int hours = _duration ~/ 3600;
+    int minutes = (_duration % 3600) ~/ 60;
+    int seconds = _duration % 60;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.transparent,
         onPressed: () {
           ref.read(onSessionProvider.notifier).update((state) => state = false);
 
@@ -46,157 +53,179 @@ class _CardDetailViewState extends ConsumerState<CardDetailView> {
         },
         child: Icon(Icons.arrow_back),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            //DELETE THİS BOOK
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 100),
-                  child: ElevatedButton(
+      body: SingleChildScrollView(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            children: [
+              //DELETE THİS BOOK
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 100),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Are you sure to remove this book ?  "),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("No"),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    _databaseService.deleteBookModels(widget.bookModel.id);
+                                    Navigator.of(context).popAndPushNamed("/home");
+                                  },
+                                  child: Text("Yes"),
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                        child: Text('Delete This Book ',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))),
+                  ),
+                  //FİNİSH BUTTON
+                  Padding(
+                    padding: const EdgeInsets.only(top: 100, left: 20),
+                    child: ElevatedButton(
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text("Are you sure to remove this book ?  "),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text("No"),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  _databaseService.deleteBookModels(widget.bookModel.id);
-                                  Navigator.of(context).popAndPushNamed("/home");
-                                },
-                                child: Text("Yes"),
-                              )
-                            ],
-                          ),
-                        );
+                        _databaseService.updateCompletedBookModels(id: widget.bookModel.id);
+                        Navigator.of(context).popAndPushNamed("/home");
+
+                        ref.read(selectedIndex.notifier).state = 0;
                       },
-                      child: Text('Delete This Book ',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ))),
-                ),
-                //FİNİSH BUTTON
-                Padding(
-                  padding: const EdgeInsets.only(top: 100, left: 20),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _databaseService.updateCompletedBookModels(id: widget.bookModel.id);
-                      Navigator.of(context).popAndPushNamed("/home");
-
-                      ref.read(selectedIndex.notifier).state = 0;
-                    },
-                    child: Text("Finish This Book", style: TextStyle(color: Colors.green)),
-                  ),
-                )
-              ],
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 70),
-              child: Text(
-                "You read this book for ${_duration ~/ 60} hours and    ${_duration % 60} minutes",
-                style: Theme.of(context).textTheme.titleMedium,
+                      child: Text("Finish This Book", style: TextStyle(color: Colors.green)),
+                    ),
+                  )
+                ],
               ),
-            ),
 
-            Divider(),
+              //KİTAP SAYAC
 
-            //RESİM
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 40, left: 80),
-                  child: Image.file(
-                    _image,
-                    height: 200,
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(top: 70),
+                child: Text(
+                  "You have  read this book for",
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Text(
+                  " $hours hours ,  $minutes minutes ,  $seconds seconds ",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
 
-                // KİTAP  VERİ
+              Divider(),
 
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20, bottom: 20, top: 35),
-                      child: SizedBox(
-                        width: 130,
-                        child: Text(
-                          widget.bookModel.bookName!,
-                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w900,
-                              ),
+              //RESİM
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 40, left: 80, bottom: 40),
+                    child: Image.file(
+                      _image,
+                      height: 200,
+                    ),
+                  ),
+
+                  // KİTAP  VERİ
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20, bottom: 20, top: 35),
+                        child: SizedBox(
+                          width: 130,
+                          child: Text(
+                            widget.bookModel.bookName!,
+                            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
-                        width: 120,
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: SizedBox(
+                          width: 120,
+                          child: Text(
+                            maxLines: 5,
+                            softWrap: true,
+                            widget.bookModel.description!,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
                         child: Text(
-                          widget.bookModel.description!,
+                          _bookPages + " Pages",
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
+                    ],
+                  )
+                ],
+              ),
+              Divider(),
+              //START BUTTON
+
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: Card(
+                  shadowColor: Colors.blue,
+                  elevation: 5,
+                  child: TextButton(
+                    onPressed: () async {
+                      Duration _duration = ref.read(durationProvider);
+
+                      if (_onSession == true) {
+                        var _oldDuration = widget.bookModel.durationSeconds ?? 0;
+                        _oldDuration += _duration.inSeconds;
+                        Duration newduration = Duration(seconds: _oldDuration);
+
+                        await _databaseService.updateDurationBookModels(id: widget.bookModel.id, duration: newduration);
+
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                          ref.read(onSessionProvider.notifier).update((state) => state = !state);
+                        });
+                        Navigator.of(context).pop();
+                      } else {
+                        ref.read(onSessionProvider.notifier).update((state) => state = !state);
+                      }
+                    },
+                    child: Text(
+                      _onSession ? "Finish Reading" : "Start Reading",
+                      style: _onSession ? TextStyle(color: Colors.red) : TextStyle(color: Colors.blue, fontSize: 40),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Text(
-                        _bookPages + " Pages",
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            Divider(),
-
-            Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Card(
-                shadowColor: Colors.blue,
-                elevation: 5,
-                child: TextButton(
-                  onPressed: () async {
-                    Duration _duration = ref.read(durationProvider);
-
-                    if (_onSession == true && mounted) {
-                      var _oldDuration = widget.bookModel.durationMinutes ?? 0;
-                      _oldDuration += _duration.inMinutes;
-                      Duration newduration = Duration(minutes: _oldDuration);
-
-                      await _databaseService.updateDurationBookModels(id: widget.bookModel.id, duration: newduration);
-                    }
-                    ref.read(onSessionProvider.notifier).update((state) => state = !state);
-                  },
-                  child: Text(
-                    _onSession ? "Finish Reading" : "Start Reading",
-                    style: _onSession ? TextStyle(color: Colors.red) : TextStyle(color: Colors.blue, fontSize: 40),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 30, left: 35),
-              child: TimeWidget(
-                onSession: _onSession,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30, left: 35),
+                child: TimeWidget(
+                  onSession: _onSession,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -342,7 +371,6 @@ class timeCard extends StatelessWidget {
           ),
           child: Text(
             "$time",
-            style: TextStyle(color: Colors.white),
           ),
         ),
         const SizedBox(height: 10),

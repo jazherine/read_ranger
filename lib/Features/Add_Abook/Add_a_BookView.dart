@@ -46,116 +46,123 @@ class _AddaBookViewState extends ConsumerState<AddaBookView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      SizedBox(
-        height: 150,
-      ),
-      Text(
-        "Add Photo",
-        style: Theme.of(context).textTheme.headlineMedium,
-      ),
-      SizedBox(
-        height: 50,
-      ),
-      Container(
-        child: InkWell(
-            onTap: () async {
-              ImagePickerS imagePickerS = ImagePickerS();
-
-              File? pickedImage = await imagePickerS.capturePhoto();
-              if (pickedImage.path.isNotEmpty) {
-                _selectedimageFile = pickedImage;
-                setState(() {});
-              }
-            },
-            child: _selectedimageFile == null
-                ? Icon(
-                    Icons.add_a_photo_outlined,
-                    size: 60,
-                  )
-                : Image.file(
-                    _selectedimageFile!,
-                    height: 200,
-                  )),
-      ),
-      SizedBox(
-        height: 50,
-      ),
-      Column(
-        children: [
+    return SingleChildScrollView(
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Column(children: [
           SizedBox(
-            width: 250,
-            child: TextField(
-              maxLength: 15,
-              decoration: InputDecoration(
-                labelText: "Book Name",
-                hintText: "Book Name",
-                hintStyle: TextStyle(fontSize: 12),
-                labelStyle: TextStyle(fontSize: 15),
-              ),
-              controller: booknameController,
-            ),
+            height: 150,
           ),
-          // Description
+          Text(
+            "Add Book Cover",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
           SizedBox(
-            width: 250,
-            child: TextField(
-              maxLength: 50,
-              decoration: InputDecoration(
-                labelText: "Description ",
-                hintText: "like a brief description of the book",
-                hintStyle: TextStyle(fontSize: 12),
-                labelStyle: TextStyle(fontSize: 15),
-              ),
-              controller: descriptionController,
-            ),
+            height: 50,
           ),
-
-          SizedBox(
-            width: 250,
-            child: TextField(
-              maxLength: 4,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "Page of the book",
-                hintText: " Enter the number of pages of the book",
-                hintStyle: TextStyle(fontSize: 12),
-                labelStyle: TextStyle(fontSize: 15),
-              ),
-              controller: bookPageController,
-            ),
-          ),
-
-          //  BUTON
-
           Container(
-              width: 250,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (booknameController.text.isEmpty ||
-                      descriptionController.text.isEmpty ||
-                      _selectedimageFile == null ||
-                      bookPageController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please fill all the fields")));
-                    return;
-                  } else {
-                    _databaseService.addBookModels(BookModel(
-                      bookPages: bookPageController.text,
-                      bookName: booknameController.text,
-                      description: descriptionController.text,
-                      imagePath: _selectedimageFile!.path,
-                    ));
+            child: InkWell(
+                onTap: () async {
+                  ImagePickerS imagePickerS = ImagePickerS();
 
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Book Added")));
-                    if (mounted) {
-                      ref.watch(selectedIndex.notifier).state = 1;
-                    }
+                  File? pickedImage = await imagePickerS.capturePhoto();
+                  if (pickedImage.path.isNotEmpty) {
+                    _selectedimageFile = pickedImage;
+                    setState(() {});
                   }
                 },
-                child: Icon(Icons.add_outlined),
-              )),
-        ],
-      )
-    ]);
+                child: _selectedimageFile == null
+                    ? Icon(
+                        Icons.add_a_photo_outlined,
+                        size: 60,
+                      )
+                    : Image.file(
+                        _selectedimageFile!,
+                        height: 200,
+                      )),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Column(
+            children: [
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  maxLength: 50,
+                  decoration: InputDecoration(
+                    labelText: "Book Name",
+                    hintText: "Book Name",
+                    hintStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 15),
+                  ),
+                  controller: booknameController,
+                ),
+              ),
+              // Description
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  maxLength: 200,
+                  decoration: InputDecoration(
+                    labelText: "Description ",
+                    hintText: "like a brief description of the book",
+                    hintStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 15),
+                  ),
+                  controller: descriptionController,
+                ),
+              ),
+
+              SizedBox(
+                width: 250,
+                child: TextField(
+                  maxLength: 4,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: "Page of the book",
+                    hintText: " Enter the number of pages of the book",
+                    hintStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 15),
+                  ),
+                  controller: bookPageController,
+                ),
+              ),
+
+              //    ARTI BUTON
+
+              Container(
+                  width: 250,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (booknameController.text.isEmpty ||
+                          descriptionController.text.isEmpty ||
+                          _selectedimageFile == null ||
+                          bookPageController.text.isEmpty) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text("Please fill all the fields")));
+                        return;
+                      } else {
+                        _databaseService.addBookModels(BookModel(
+                          bookPages: bookPageController.text,
+                          bookName: booknameController.text,
+                          description: descriptionController.text,
+                          imagePath: _selectedimageFile!.path,
+                        ));
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Book Added")));
+                        if (mounted) {
+                          ref.watch(selectedIndex.notifier).state = 1;
+                        }
+                      }
+                    },
+                    child: Icon(Icons.add_outlined),
+                  )),
+            ],
+          )
+        ]),
+      ),
+    );
   }
 }

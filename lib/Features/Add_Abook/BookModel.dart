@@ -11,11 +11,11 @@ class BookModel {
   String? imagePath;
   String? bookPages;
   bool? isCompleted;
-  int? durationMinutes;
+  int? durationSeconds;
   BookModel(
       {this.bookName, this.description, this.bookPages, this.imagePath, Duration? duration, this.isCompleted = false}) {
     if (duration != null) {
-      this.durationMinutes = duration.inMinutes;
+      this.durationSeconds = duration.inSeconds;
     }
   }
 }
